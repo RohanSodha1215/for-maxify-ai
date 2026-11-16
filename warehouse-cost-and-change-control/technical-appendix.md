@@ -4,21 +4,21 @@
 
 **Role:** founding and main developer · **Period:** April 2025 to present · **Status:** in production
 
-**Stack:** Python (Flask, SQLAlchemy), PostgreSQL, Vue 3, BigQuery, Google Cloud Storage, LLM APIs, Docker
+**Stack:** Python (Flask, SQLAlchemy), PostgreSQL, Vue 3, BigQuery, Google Cloud Storage, Docker
 
 This appendix accompanies the two-page case study of the same name. It repeats the summary and then describes each part in detail.
 
 ## The problem
 
-Our company keeps its analytics data in BigQuery, a cloud data warehouse that charges for the data stored and for the compute each query uses. Hundreds of people create tables and write queries. Nobody removes a table when it stops being used, and nobody revisits a scheduled query that costs more than it needs to, so the bill only grows.
+Our company keeps its analytics data in BigQuery, a cloud data warehouse that charges for the data stored and for the compute each query uses. Hundreds of people create tables and write queries. Nobody removes a table when it stops being used, and nobody acts on the provider's suggestions for laying tables out more cheaply, so the bill only grows.
 
 The data engineering team was also the bottleneck for routine changes. Adding a column or creating a table meant asking an engineer in chat, who then made the change by hand with no record of who approved it.
 
 ## What I built
 
-An internal web tool that finds waste in the warehouse, removes it safely, and puts routine schema changes behind an approval step. I started it on an empty project skeleton and built the parts described here; the tool also has other features, built by teammates, that this document leaves out.
+An internal web tool that finds waste in the warehouse, removes it safely, and puts routine schema changes behind an approval step. I started it on an empty project skeleton and built the parts described here. Query optimisation, also part of this tool, has [its own case study](../llm-query-optimisation/README.md); the tool's remaining features were built by teammates and are left out.
 
-It has five parts of mine. The first, the cleanup of inactive tables, is the easiest to picture:
+This document covers four parts of mine. The first, the cleanup of inactive tables, is the largest:
 
 ```
 Nightly scan ── merges the last few days of query logs into a
@@ -39,26 +39,7 @@ Every stage, waiting period and exclusion pattern is a setting in the UI. An ove
 
 **Example.** A team stops using a large table. After 180 days with no query reading it, the scan lists it as detected. After the first wait the tool checks, live, that nothing has written to the table recently, then renames it. Nobody complains during the second wait, so the tool exports the table to cloud storage and deletes it. Had a job still depended on it, the job would have failed on the rename and the owner could have restored the table with one click.
 
-The other four parts follow. Under all of them sits a runtime I also built: a metadata store, a background job executor and cron scheduler (first versions), heartbeat-based leader election so scheduled work runs once across replicas, configuration editable in the UI, Google sign-in with editor and admin roles, and the container build.
-
-### Query optimisation
-
-A user pastes a query, or picks a past job from the tool's job history. The tool returns a cheaper query only if it can show that the new one is valid, returns the same number of rows and costs less. It runs as a background job in four stages:
-
-1. **Collect context.** The tool asks BigQuery to dry-run the query. A dry run parses the query without executing it and reports which tables it reads. I use this instead of parsing SQL myself, because a regular expression cannot tell a table name from a comment, a string or a named subquery. For each table the tool fetches its definition, row count and size.
-2. **Ask the model.** The prompt holds the query, the table context, optional notes from the user and a rule file of optimisation patterns. Prompt and rule file are selected in configuration, so a new strategy is a new file, not a release. The reply must match a JSON schema: the new query, a list of changes and the reasoning.
-3. **Dry-run the rewrite.** If BigQuery rejects it, the error message goes back to the model with the failed query, for a limited number of retries. Only syntax errors are retried.
-4. **Run and compare.** Both queries are rewritten to read every table as of one fixed timestamp (BigQuery's time travel), so data that arrives between the two runs cannot change the result. Results go to a temporary table that is deleted afterwards. The rewrite passes only if the row counts match and it used less compute; which metric must fall (compute time, bytes read, or both) is a setting.
-
-Details that mattered in practice:
-
-- **Early cancel.** While the rewrite runs, the tool polls its compute use and cancels it as soon as it exceeds the original's total. A bad rewrite never costs more than the query it tried to improve.
-- **Half-price mode.** When the user starts from a past job, the tool reuses that job's recorded statistics as the baseline and runs only the rewrite, pinned to the time the original job started.
-- **Abort and timeout.** A user can abort a running optimisation; the pipeline checks for this between stages and on every poll, and cancels the BigQuery job.
-- **Model client.** One interface with two providers (a model proxy and a direct cloud API). Model, provider and limits can be changed in the UI and apply on the next call without a restart. The client detects a reply cut off by an output limit and reports it as such, instead of passing on an empty result.
-- **Hand-over.** A user selects verified results, groups them under headings and sends one chat message to the owning teams. Only results that passed the comparison can be sent.
-
-Known limits, which I would state in a review: the comparison checks row counts, not row contents, so a person still reads the diff before adopting a rewrite. If the time-travel rewrite does not pass its own dry run, the tool falls back to comparing without it. Time travel only reaches back a few days, so the half-price mode loses pinning for older jobs.
+The other three parts follow. Under all of them sits a runtime I also built: a metadata store, a background job executor and cron scheduler (first versions), heartbeat-based leader election so scheduled work runs once across replicas, configuration editable in the UI, Google sign-in with editor and admin roles, and the container build.
 
 ### Schema change requests
 
@@ -96,13 +77,11 @@ An internal chat bot files schema-change and access requests for users. I added 
 - **A destructive step fails closed.** If the access data cannot be refreshed, the whole nightly run stops. If a table's last-modified time cannot be read live at decision time, the table is held back. A cached value can be stale, and a wrongly kept table costs far less than a wrongly deleted one.
 - **Rename before delete.** A rename is cheap to undo and surfaces hidden users of a table better than any log analysis.
 - **Derive state instead of storing it.** The deletion date is computed from the day the table entered the pending stage plus the current setting, so changing the setting takes effect at once. The log-ingest position is the newest timestamp in the state table itself, so first run, catch-up and rebuild are one code path.
-- **A model's rewrite is a proposal, not a result.** It must pass a dry run and then a real side-by-side run before anyone is told about it.
 - **Schema changes can only add.** No request can remove data, so the worst outcome of a wrong approval is an unused column.
 - **Automated agents can ask; only people decide.**
 
 ## Results
 
-- Query optimisation has saved about USD 4,000 a month.
 - Inactive table cleanup has saved about USD 1,000 a month.
 - Clustering suggestions have saved about USD 1,000 a month.
 - Moving the inactive-table scan from the full query-log history to the incremental state table cut its nightly log read from about 30 GB per scanned project to about 0.3 GB in total, measured on production data. The cost no longer grows with the number of projects scanned.
@@ -112,7 +91,6 @@ An internal chat bot files schema-change and access requests for users. I added 
 
 - The service's foundation: metadata store, the first background job executor and scheduler, leader election, configuration, sign-in and roles, deployment packaging.
 - Inactive table cleanup, end to end: scan, staged deletion, exclusions, archival, cost reporting, the incremental last-access table, and the UI.
-- Query optimisation, end to end: the four-stage pipeline, the model client, the snapshot-pinned comparison with early cancel, hand-over messages to owning teams, a command-line version, and the UI.
 - Schema change requests, end to end: validation on both sides, the state machine and event log, the lease-based worker with crash recovery, and the UI.
 - Clustering suggestions: the scheduled refresh, the apply and dismiss actions, and the UI.
 - The token-based API that lets automated agents file and read requests but not decide them.
