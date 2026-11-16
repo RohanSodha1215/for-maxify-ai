@@ -4,6 +4,14 @@ Most of my professional work is in private repositories that belong to my employ
 
 Each case study explains the problem, what I built, how it works, the main design decisions, and which parts were mine. Internal names and data are left out.
 
+## Strongest production AI workflow
+
+### Data engineering operations bot
+
+**Read:** [write-up with diagrams](Strong%20Production%20AI%20Workflow/Data%20Engineering%20Operations%20Bot/README.md)
+
+How the bot works in production: how the model, the tools, the data and the external systems interact, how quality and permissions are controlled, how failures are handled, a real failure that became a permanent guardrail, and what remains.
+
 ## Case studies
 
 | Case study | What it is | Read |
