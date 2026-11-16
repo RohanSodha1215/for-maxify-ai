@@ -11,6 +11,8 @@ Each case study explains the problem, what I built, how it works, the main desig
 | [On-call assistant bot](#on-call-assistant-bot-for-a-data-engineering-team) | A Slack bot that answers, prepares or escalates the requests a data engineering team's on-call engineer receives. | [case study](on-call-assistant-bot/README.md) · [PDF](on-call-assistant-bot/on-call-assistant-bot-case-study.pdf) |
 | [Warehouse cost and change-control tool](#cost-and-change-control-tool-for-a-bigquery-data-warehouse) | An internal web tool that safely removes unused tables, applies the provider's clustering suggestions and puts schema changes behind an approval step. | [case study](warehouse-cost-and-change-control/README.md) · [PDF](warehouse-cost-and-change-control/warehouse-cost-and-change-control-case-study.pdf) · [appendix](warehouse-cost-and-change-control/technical-appendix.md) |
 | [Verified LLM query rewrites](#verified-llm-rewrites-of-expensive-warehouse-queries) | A pipeline that has a language model rewrite expensive queries and accepts a rewrite only after a measured run proves it returns the same rows for less compute. | [case study](llm-query-optimisation/README.md) · [PDF](llm-query-optimisation/llm-query-optimisation-case-study.pdf) |
+| [Feature-flag changes by AI agents](#feature-flag-changes-by-ai-agents-with-a-human-applying-every-change) | A review layer and agent tools that let AI agents read feature flags and propose changes, while only a person can apply one. | [case study](agent-feature-flag-change-requests/README.md) · [PDF](agent-feature-flag-change-requests/agent-feature-flag-change-requests-case-study.pdf) |
+| [Feature-flag lifecycle](#a-lifecycle-for-feature-flags) | Expiry dates, stages computed from real usage, and a daily job that removes unused flags and tells their owners. | [case study](feature-flag-lifecycle/README.md) · [PDF](feature-flag-lifecycle/feature-flag-lifecycle-case-study.pdf) |
 
 ### On-call assistant bot for a data engineering team
 
@@ -69,6 +71,43 @@ What I personally built (all of it):
 - Parallel runs, a command-line version, the hand-over messages to owning teams, and the web pages.
 
 It is part of the warehouse tool above and starts past-job runs from that tool's job history, which is a separate feature.
+
+### Feature-flag changes by AI agents, with a human applying every change
+
+**Read:** [case study](agent-feature-flag-change-requests/README.md) · [PDF, 2 pages](agent-feature-flag-change-requests/agent-feature-flag-change-requests-case-study.pdf)
+
+**Role:** designer and sole developer · **Period:** March to November 2026 · **Status:** in production
+
+**Stack:** Go, gRPC and Protocol Buffers, PostgreSQL, MCP (Model Context Protocol) tool server, Python web app
+
+A review layer for a feature-flag service that holds more than 2,000 live flags. An AI coding agent can read any flag and propose a create, an update or a delete; the change is written only when a person applies it in the admin web app, after seeing the live and proposed configuration side by side. Proposals are stored apart from live flags, a stale proposal fails instead of overwriting a newer edit, and the agent tools have no way to approve anything.
+
+What I personally built (all of it):
+
+- The design of the review layer, end to end.
+- In the flag service: one shared write path for hand edits and approved edits, the change request table and API, the apply transaction and the authorisation rules.
+- The agent tools in a shared MCP tool server: read tools first, then propose and tracking tools.
+- The review page in the admin web app, with the side-by-side diff, and the API contract for all of it.
+
+The flag service's core and the tool server framework were built by colleagues.
+
+### A lifecycle for feature flags
+
+**Read:** [case study](feature-flag-lifecycle/README.md) · [PDF, 2 pages](feature-flag-lifecycle/feature-flag-lifecycle-case-study.pdf)
+
+**Role:** designer and sole developer · **Period:** July 2025 to March 2026 · **Status:** in production since late 2025
+
+**Stack:** Go, gRPC and Protocol Buffers, PostgreSQL, Slack, Python web app
+
+A lifecycle for the same feature-flag service, where flags used to stay forever and every app fetched all of them. Each temporary flag now has an expiry date and a stage computed from evidence of real use: which app builds still contain it, and when the web last requested it. A daily job removes unused flags in slow, reversible steps and tells the owning team first. Apps fetch only the flags they use, which reduced the data sent to users' devices by about 10 TB.
+
+What I personally built:
+
+- The design of the lifecycle: the stages, the evidence rules and the safety rules.
+- In the flag service: build tracking, usage tracking, the smaller fetch call with its fallback, the stage logic, expiry extensions, the daily job and the Slack notifications.
+- The dashboards and lifecycle pages in the admin web app, and the API contract.
+
+The flag service's core was built by colleagues. The mobile team owns the build pipeline that reports each build's flags and the code generator that reads the stage.
 
 ## Code walkthrough
 
