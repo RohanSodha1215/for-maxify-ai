@@ -2,7 +2,7 @@
 
 *Also available as a [PDF](on-call-assistant-bot-case-study.pdf).*
 
-**Role:** designer and main developer · **Period:** June 2026 to present · **Status:** in production since October 2026
+**Role:** designer and main developer · **Status:** in production since October 2026
 
 **Stack:** Python, an LLM agent framework (steps defined in YAML), Slack, MCP tool servers, sandboxed scripts
 

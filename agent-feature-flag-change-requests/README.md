@@ -2,7 +2,7 @@
 
 *Also available as a [PDF](agent-feature-flag-change-requests-case-study.pdf).*
 
-**Role:** designer and sole developer · **Period:** March to November 2026 · **Status:** in production
+**Role:** designer and sole developer · **Status:** in production
 
 **Stack:** Go, gRPC and Protocol Buffers, PostgreSQL, MCP (Model Context Protocol) tool server, Python web app
 

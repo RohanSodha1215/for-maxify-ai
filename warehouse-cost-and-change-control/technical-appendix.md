@@ -2,7 +2,7 @@
 
 *Also available as a [PDF](warehouse-cost-and-change-control-technical-appendix.pdf). The two-page case study is [here](README.md).*
 
-**Role:** founding and main developer · **Period:** April 2025 to present · **Status:** in production
+**Role:** founding and main developer · **Status:** in production
 
 **Stack:** Python (Flask, SQLAlchemy), PostgreSQL, Vue 3, BigQuery, Google Cloud Storage, Docker
 

@@ -2,7 +2,7 @@
 
 *Also available as a [PDF](feature-flag-lifecycle-case-study.pdf).*
 
-**Role:** designer and sole developer · **Period:** July 2025 to March 2026 · **Status:** in production since late 2025
+**Role:** designer and sole developer · **Status:** in production since late 2025
 
 **Stack:** Go, gRPC and Protocol Buffers, PostgreSQL, Slack, Python web app
 

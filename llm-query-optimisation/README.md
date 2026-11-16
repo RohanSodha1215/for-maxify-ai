@@ -2,7 +2,7 @@
 
 *Also available as a [PDF](llm-query-optimisation-case-study.pdf).*
 
-**Role:** designer and sole developer · **Period:** May 2026 to present · **Status:** in production
+**Role:** designer and sole developer · **Status:** in production
 
 **Stack:** Python (Flask), PostgreSQL, Vue 3, BigQuery Python SDK, LLM APIs via an OpenAI-compatible proxy
 

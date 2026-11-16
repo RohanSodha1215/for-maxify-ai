@@ -18,7 +18,7 @@ Each case study explains the problem, what I built, how it works, the main desig
 
 **Read:** [case study](on-call-assistant-bot/README.md) · [PDF, 2 pages](on-call-assistant-bot/on-call-assistant-bot-case-study.pdf)
 
-**Role:** designer and main developer · **Period:** June 2026 to present · **Status:** in production since October 2026
+**Role:** designer and main developer · **Status:** in production since October 2026
 
 **Stack:** Python, an LLM agent framework (steps defined in YAML), Slack, MCP tool servers, sandboxed scripts
 
@@ -38,7 +38,7 @@ The bot runs on two internal platforms built by colleagues: an agent framework a
 
 **Read:** [case study](warehouse-cost-and-change-control/README.md) · [PDF, 2 pages](warehouse-cost-and-change-control/warehouse-cost-and-change-control-case-study.pdf) · [technical appendix](warehouse-cost-and-change-control/technical-appendix.md) · [appendix PDF, 3 pages](warehouse-cost-and-change-control/warehouse-cost-and-change-control-technical-appendix.pdf)
 
-**Role:** founding and main developer · **Period:** April 2025 to present · **Status:** in production
+**Role:** founding and main developer · **Status:** in production
 
 **Stack:** Python (Flask, SQLAlchemy), PostgreSQL, Vue 3, BigQuery, Google Cloud Storage, Docker
 
@@ -57,7 +57,7 @@ Query optimisation is also part of this tool and has [its own case study](#verif
 
 **Read:** [case study](llm-query-optimisation/README.md) · [PDF, 4 pages](llm-query-optimisation/llm-query-optimisation-case-study.pdf)
 
-**Role:** designer and sole developer · **Period:** May 2026 to present · **Status:** in production
+**Role:** designer and sole developer · **Status:** in production
 
 **Stack:** Python (Flask), PostgreSQL, Vue 3, BigQuery Python SDK, LLM APIs via an OpenAI-compatible proxy
 
@@ -76,7 +76,7 @@ It is part of the warehouse tool above and starts past-job runs from that tool's
 
 **Read:** [case study](agent-feature-flag-change-requests/README.md) · [PDF, 2 pages](agent-feature-flag-change-requests/agent-feature-flag-change-requests-case-study.pdf)
 
-**Role:** designer and sole developer · **Period:** March to November 2026 · **Status:** in production
+**Role:** designer and sole developer · **Status:** in production
 
 **Stack:** Go, gRPC and Protocol Buffers, PostgreSQL, MCP (Model Context Protocol) tool server, Python web app
 
@@ -95,7 +95,7 @@ The flag service's core and the tool server framework were built by colleagues.
 
 **Read:** [case study](feature-flag-lifecycle/README.md) · [PDF, 2 pages](feature-flag-lifecycle/feature-flag-lifecycle-case-study.pdf)
 
-**Role:** designer and sole developer · **Period:** July 2025 to March 2026 · **Status:** in production since late 2025
+**Role:** designer and sole developer · **Status:** in production since late 2025
 
 **Stack:** Go, gRPC and Protocol Buffers, PostgreSQL, Slack, Python web app
 
