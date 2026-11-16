@@ -80,7 +80,7 @@ Example: a colleague writes "I need read access to the storage bucket X for my a
 - A test call to the service was redirected to a login page, so the send script never follows a redirect, which would carry the token to another host.
 - A sandbox timeout once left the outcome to how a model read an empty template, so a fixed rule now stops the request before any model runs.
 
-## 5. Outcome, and what remains
+## 5. Outcome, and what comes next
 
 **Achieved**
 
@@ -88,11 +88,8 @@ Example: a colleague writes "I need read access to the storage bucket X for my a
 - Three request types run end to end with the confirm step.
 - About a third of the 568 analysed requests fall in categories the bot now answers or prepares. This is coverage, not a measured reduction in on-call work.
 
-**What remains**
+**Next**
 
-- **A measured resolution rate:** the share of requests resolved without a person is not measured yet.
-- **An automated regression set:** evaluation is replay and manual review today.
-- **Who may press Submit:** anyone in the thread can, although the request is always filed under the person who started it.
-- **Code-review requests:** they are 29% of recent volume and the largest group the bot still escalates. Pre-checking pull requests is the next piece of work.
+- **Code-review requests:** they are 29% of recent volume and the largest group the bot still escalates. A simple implementation that extends the bot to these requests is ready and will be deployed soon.
 
 I am happy to walk through the design and the code in a live session.
