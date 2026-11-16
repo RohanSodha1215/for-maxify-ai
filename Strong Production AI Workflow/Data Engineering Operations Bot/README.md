@@ -2,7 +2,7 @@
 
 **Evidence for:** my strongest production AI workflow
 
-**Role:** designer and main developer · **Period:** June 2026 to present · **Status:** in production since October 2026
+**Role:** designer and main developer · **Status:** in production since October 2026
 
 A Slack bot that handles the requests other teams send to a data engineering team's on-call engineer. It answers repeat questions from a curated knowledge base, prepares standard requests and files them only after a person confirms, and hands everything else to the on-call engineer.
 
